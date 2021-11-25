@@ -19,12 +19,25 @@ app.get("/", function (req, res) {
 });
 
 
+
+
 app.get('/api/:date',(req,res) => {
-  // Add some logic to check whether the date is a unix timestamp or iso date.
-  // Make sure users can't post invalid data.
-  const unix = Date.parse(req.params.date)
-  const utc = moment(req.params.date).format('MMMM Do YYYY, h:mm:ss a');
-  res.send({unix , utc})
+  const input = parseInt(req.params.date);
+  const response = {}
+  const unix = Math.round(Date.parse(req.params.date))
+  if(isNaN(input)) {
+    res.send({ error : "Invalid Date" })
+    return
+  }
+  else if (unix) {
+    response.unix = unix
+    response.utc = new Date(unix).toUTCString()
+  }
+  else {
+    response.unix = input
+    response.utc = new Date(input).toUTCString()
+  }
+  res.send(response)
 })
 
 
